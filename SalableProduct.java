@@ -2,6 +2,7 @@ import java.util.HashMap;
 
 /**
 *A class representing a salable product.
+*@author rargueta
 */
 public class SalableProduct {
 

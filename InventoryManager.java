@@ -4,6 +4,7 @@ import java.util.Map;
 /**
  * The InventoryManager class represents a collection of salable products
  * available for purchase in a store.
+ * @author rargueta
  */
 public class InventoryManager {
 

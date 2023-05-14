@@ -3,6 +3,7 @@ import java.util.HashMap;
 /**
  * This class represents a shopping cart that stores a list of salable products
  * chosen for purchase by the user.
+ * @author rargueta
  */
 public class ShoppingCart {
 
@@ -53,7 +54,7 @@ public class ShoppingCart {
             }
         }
     }
-
+   
     /**
      * Returns the map of salable products and their quantities in the shopping cart.
      *
@@ -62,5 +63,12 @@ public class ShoppingCart {
 
     public HashMap<SalableProduct, Integer> getProducts() {
         return mapOfProducts;
+    }
+    
+    /**
+     * Removes all products from the shopping cart.
+     */
+    public void clear() {
+    mapOfProducts.clear();
     }
 }
