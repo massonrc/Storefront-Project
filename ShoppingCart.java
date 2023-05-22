@@ -32,7 +32,8 @@ public class ShoppingCart {
         if (mapOfProducts.containsKey(product)) {
             int currentQuantity = mapOfProducts.get(product);
             mapOfProducts.put(product, currentQuantity + quantity);
-        } else {
+        } 
+        else {
             mapOfProducts.put(product, quantity);
         }
     }
@@ -49,7 +50,8 @@ public class ShoppingCart {
             int currentQuantity = mapOfProducts.get(product);
             if (currentQuantity <= quantity) {
                 mapOfProducts.remove(product);
-            } else {
+            } 
+            else {
                 mapOfProducts.put(product, currentQuantity - quantity);
             }
         }

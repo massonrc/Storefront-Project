@@ -1,7 +1,4 @@
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.Map;
-
+import java.util.*;
 
 /**
  * The StoreFront class represents a store with an inventory of salable products
@@ -10,6 +7,8 @@ import java.util.Map;
  */
 public class StoreFront {
 	private InventoryManager inventoryManager;
+	private ShoppingCart cart;
+
 
 	/**
 	 * Constructs a new StoreFront object with an empty inventory.
@@ -17,6 +16,7 @@ public class StoreFront {
 
 	public StoreFront() {
 		this.inventoryManager = new InventoryManager(new HashMap<>());
+		this.cart = new ShoppingCart();
 	}
 
 	/**
@@ -65,6 +65,7 @@ public class StoreFront {
 	    }
 	}
 	
+	
 	/**
      * Displays a list of actions for the user to interact with the store front.
      */
@@ -72,9 +73,10 @@ public class StoreFront {
     	
     	System.out.println("What would you like to do?");
         System.out.println("1. View inventory");
-        System.out.println("2. Process sale");
-        System.out.println("3. Cancel sale");
-        System.out.println("4. Quit");
+        System.out.println("2. Add items to shopping cart");
+        System.out.println("3. Process sale");
+        System.out.println("4. Cancel sale");
+        System.out.println("5. Quit");
     }
 
 	/**
@@ -82,18 +84,11 @@ public class StoreFront {
 	 */
 	
 	public static void main(String[] args) {	
-		// We create a new store with an empty inventory, as well as a new shopping cart for the user
+		// We create a new store with an established inventory, as well as an empty shopping cart for the user
 		StoreFront store = new StoreFront();
 		Scanner scanner = new Scanner(System.in);
 	    boolean done = false;
 	    ShoppingCart cart = new ShoppingCart();
-	    
-		// Add some products to the inventory 
-		Weapon sword = new Weapon("Sword", "A long, two-handed blade that deals a fair amount of damage.", 100, 2, 20);
-		Weapon axe = new Weapon("Axe", "A one-handed double bladed weapon that deals a fair amount of damage.", 150, 1, 35);
-		Armor chainmail = new Armor("Chainmail", "A protective layer of armor that goes over the chest.", 250, 3, 50);
-		Armor boots = new Armor("Boots", "A protective layer of armor that covers the feet and shins.", 100, 5, 25);
-		Health ginseng = new Health("Ginseng", "A root rich in antioxidants that boosts health.", 50, 25, 15);
 		
 		//Welcome message for the store
 		System.out.println("Welcome to the FWA Store! We sell items to prepare you for your arena fight!\n");
@@ -105,61 +100,170 @@ public class StoreFront {
 	        switch (input) {
 	            case "1":
 	            	//Display the current inventory
-	        		Map<SalableProduct, Integer> initialInventory = new HashMap<>();
-	        		initialInventory.put(sword, sword.getQuantity());
-	        		initialInventory.put(axe, axe.getQuantity());
-	        		initialInventory.put(chainmail, chainmail.getQuantity());
-	        		initialInventory.put(boots, boots.getQuantity());
-	        		initialInventory.put(ginseng, ginseng.getQuantity());
-	        		System.out.println("\nHere's what we've got: \n");
-	        		for (SalableProduct product : initialInventory.keySet()) {    	        		
-	        			System.out.println(product.getName() + ": " + product.getDescription() + ", it costs: $" + product.getPrice() + ". We currently have in stock: "+ initialInventory.get(product) + "\n");
-	        		} 
-	                break;
-	            case "2":
-	            	// Add some products to the shopping cart
-	                cart.addProduct(axe, 2);
-	                cart.addProduct(ginseng, 3);
-	                cart.addProduct(chainmail, 1);
+	            	Map<String, SalableProduct> initialInventory = store.getInventoryManager().getInventory();
 
-	                // Display the contents of the shopping cart and calculates the grand total
+	                System.out.println("\nHere's what we've got: \n");
+
+	                List<Weapon> weaponList = new ArrayList<>();
+	                List<SalableProduct> otherProducts = new ArrayList<>();
+
+	                for (SalableProduct product : initialInventory.values()) {
+	                    if (product instanceof Weapon) {
+	                        weaponList.add((Weapon) product);
+	                    } else {
+	                        otherProducts.add(product);
+	                    }
+	                }
+
+	                weaponList.sort(Comparator.comparing(Weapon::getName));
+
+	                System.out.println("Weapons:\n");
+	                for (Weapon weapon : weaponList) {
+	                    System.out.println(weapon.getName() + ": " + weapon.getDescription() + " It costs: $" + weapon.getPrice() + ". We currently have in stock: " + weapon.getQuantity() + "\n");
+	                }
+
+	                System.out.println("Other Products:\n");
+	                for (SalableProduct product : otherProducts) {
+	                    System.out.println(product.getName() + ": " + product.getDescription() + " It costs: $" + product.getPrice() + ". We currently have in stock: " + product.getQuantity() + "\n");
+	                }
+	                break;
+	                
+	            case "2":
+	            	// Allow user to add product to the shopping cart
+	            	 boolean validInput = false;
+	            	 while(!validInput) {
+ 		         		 
+	            		 System.out.println("\nHere's what we've got: \n");
+	            	    	Map<String, SalableProduct> inventory = store.getInventoryManager().getInventory();
+	            	    	for (SalableProduct product : inventory.values()) {
+	            	    		System.out.println(product.getName() + ": " + product.getDescription() +
+	            	                ", it costs: $" + product.getPrice() + ". We currently have in stock: " +
+	            	                product.getQuantity() + "\n");
+	            	    	}
+	            	    	
+	            	    	System.out.println("Please enter the name of the product you want to add to your shopping cart:");
+	            	    	String productName = scanner.next().toLowerCase(); // Convert input to lowercase for case-insensitive comparison
+	            	    	System.out.println("Please enter the quantity of " + productName + " you want to add:");
+	            	    	int quantity = scanner.nextInt();
+
+	            	    	SalableProduct product = null;
+	            	    	for (SalableProduct p : inventory.values()) {
+	            	    		if (p.getName().toLowerCase().equals(productName)) { // Compare lowercase product names
+	            	    			product = p;
+	            	    			break;
+	            	    		}
+	            	    	}
+	            	    	if (product != null) {
+	            	    		int availableQuantity = product.getQuantity();
+	            	    		if (quantity > availableQuantity) {
+	            	    			System.out.println("Sorry, we don't have that many. We currently have: " + availableQuantity + " " +
+	            	                    product.getName() + "(s) available.\n");
+	            	    		} 
+	            	    		else {
+	            	    			cart.addProduct(product, quantity);
+	            	    			System.out.println(quantity + " " + product.getName() + "(s) added to your shopping cart.\n");            	        
+	            	            	validInput = true;
+	            	            	
+	            	    		}
+	            	    	} 
+	            	    	else {
+	            	    		System.out.println("Sorry, we don't have " + productName + " in our inventory.\n");
+	            	    	}
+	            	    	
+	            	    	// Reduce the quantity of products in the inventory
+	            	        Map<SalableProduct, Integer> lessInventory = cart.getProducts();
+	            	        for (SalableProduct prods : lessInventory.keySet()) {
+	            	            int newQuantity = lessInventory.get(product);
+	            	            store.getInventoryManager().reduceQuantity(product, quantity);
+	            	        }                  
+	            	    }
+	            	   break;
+	            	    
+	            case "3":
+	            	// Display the contents of the shopping cart and calculate the grand total
 	                System.out.println("\nYour shopping cart has:");
 	                Map<SalableProduct, Integer> cartContents = cart.getProducts();
 	                int totalPrice = 0;
-	                for (SalableProduct product : cartContents.keySet()) {
-	                    int quantity = cartContents.get(product);
+	                for (Map.Entry<SalableProduct, Integer> entry : cartContents.entrySet()) {
+	                    SalableProduct product = entry.getKey();
+	                    int quantity = entry.getValue();
 	                    int price = product.getPrice() * quantity;
 	                    System.out.println(product.getName() + ": " + quantity);
 	                    totalPrice += price;
 	                }
-	                /*Provides user with total an option to proceed with sale or not
-	                 * displays an error message if user enters incorrect prompt
-	                 */
-	                System.out.println("Your total price is: $" + totalPrice);
-	                System.out.println("Proceed with sale? (Press Y for yes; N for no)");
-	                input = scanner.next().toUpperCase();
-	                while(true) {                	
-	                    if(input.equals("Y")) {
-	                        store.processSale(cart);
-	                        System.out.println("Thank you for your purchase!\n");
-	                        break; // exit the while loop after sale is processed
+	                if (totalPrice == 0) {
+	                    System.out.println("Your shopping cart is empty.");
+	                } 
+	                else {
+	                    /* Provide user with the option to proceed with the sale or not
+	                     * Display an error message if the user enters an incorrect prompt
+	                     */
+	                    System.out.println("Your total price is: $" + totalPrice);
+	                    System.out.println("Proceed with sale? (Press Y for yes; N for no)");
+	                    String userInput = scanner.next().toUpperCase();
+	                    while (true) {
+	                        if (userInput.equals("Y")) {
+	                            store.processSale(cart);
+	                            System.out.println("Thank you for your purchase!\n");
+	                            cart.clear();
+	                            break;
+	                        }
+	                        if (userInput.equals("N")) {
+	                            break;
+	                        } 
+	                        else {
+	                            System.out.println("Invalid input! Please enter Y/N if you would like to proceed with the sale:");
+	                            userInput = scanner.next().toUpperCase();
+	                        }
 	                    }
-	                    if(input.equals("N")) {
-	                        break;
-	                    }
-	                    else {
-	                        System.out.println("Invalid input! Please enter Y/N if you would like to proceed with sale:");
-	                        input = scanner.next().toUpperCase();
-	                    }                    
 	                }
 	                break;
-	            case "3":
-	            	//Cancels sale if user selects this option
-	            	System.out.println("\nYour sale has been canceled. Thanks for shopping with us!\n");
-	                cart.clear();
-	                break;
+	            
 	            case "4":
-	            	//Closes store menu
+	            	//Gives the user the choice to clear shopping cart contents or to remove singular items
+	            	System.out.println("What would you like to do?");
+	                System.out.println("1. Clear shopping cart");
+	                System.out.println("2. Remove a single item");
+	                System.out.println("3. Return to main menu");
+	                
+	                String cartOption = scanner.next();
+	                
+	                switch (cartOption) {
+	                    case "1":
+	                        cart.clear();
+	                        System.out.println("Your shopping cart has been cleared.\n");
+	                        break;
+	                    case "2":
+	                        System.out.println("Enter the name of the product to remove:");
+	                        String productName = scanner.next().toLowerCase();
+
+	                        // Check if the product is in the cart
+	                        SalableProduct productToRemove = null;
+
+	                        for (SalableProduct product : cart.getProducts().keySet()) {
+	                            if (product.getName().toLowerCase().equals(productName)) {
+	                                productToRemove = product;
+	                                break;
+	                            }
+	                        }
+	                        if (productToRemove != null) {
+	                            cart.removeProduct(productToRemove, 1); // Remove only one quantity of the product
+	                            System.out.println("Removed 1 " + productToRemove.getName() + " from your shopping cart.\n");
+	                            store.getInventoryManager().increaseQuantity(productToRemove, 1); // Increase the quantity in the store's inventory
+	                        } else {
+	                            System.out.println("The product is not in your shopping cart.\n");
+	                        }
+	                        break;
+	                    case "3":
+	                        break;
+	                    default:
+	                        System.out.println("Invalid option. Please choose a valid option.");
+	                        break;
+	                }
+	                break;
+	                
+	            case "5":
+	            	//Closes store menu and exits program
 	                done = true;
 	                System.out.println("Thanks for stopping by! Goodbye!");
 	                System.exit(0);

@@ -4,7 +4,7 @@
  * @author rargueta
  *
  */
-public class Weapon extends SalableProduct {
+public class Weapon extends SalableProduct implements Comparable<Weapon> {
 	private int damage;
 	
 	/**
@@ -34,5 +34,10 @@ public class Weapon extends SalableProduct {
 	 */
 	public void setDamage(int damage) {
 	    this.damage = damage;
+	}
+
+	@Override
+	public int compareTo(Weapon other) {
+		return getName().compareToIgnoreCase(other.getName());
 	}
 }
