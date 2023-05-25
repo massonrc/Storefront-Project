@@ -1,11 +1,18 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * The Armor class represents a type of salable product that provides defense to the player.
  * It extends the SalableProduct class and adds an integer field to hold the defense value of the armor.
  * @author rargueta
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Armor extends SalableProduct {
 	private int defense;
+	
+	public Armor() {
+		
+	}
 	
 	/**
 	 * Constructs a new Armor object with the given name, description, price, quantity, and defense value.

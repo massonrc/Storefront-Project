@@ -1,15 +1,24 @@
 import java.util.HashMap;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
 *A class representing a salable product.
 *@author rargueta
 */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SalableProduct {
 
 	private String name;
 	private String description;
 	private int price;
 	private int quantity;
+	
+	/**
+	 * Default constructor 
+	 */
+	public SalableProduct() {
+		
+	}
 
 	/**
 	 * Constructs a new SalableProduct with the given attributes.

@@ -1,11 +1,18 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Health class represents a type of SalableProduct that can restore the player's health.
  * It extends the abstract class SalableProduct and has an additional field of healthAmount.
  * @author rargueta
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Health extends SalableProduct {
 	private int healthAmount;
+	
+	public Health() {
+		
+	}
 
 	/**
 	 * Constructs a new Health object with a name, description, price, quantity, and healingAmount.

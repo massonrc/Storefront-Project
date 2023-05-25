@@ -1,4 +1,8 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * The StoreFront class represents a store with an inventory of salable products
@@ -11,11 +15,10 @@ public class StoreFront {
 
 
 	/**
-	 * Constructs a new StoreFront object with an empty inventory.
+	 * Constructs a new StoreFront object with an inventory loaded from a JSON file.
 	 */
-
 	public StoreFront() {
-		this.inventoryManager = new InventoryManager(new HashMap<>());
+		this.inventoryManager = new InventoryManager("inventory.json");
 		this.cart = new ShoppingCart();
 	}
 
@@ -23,7 +26,6 @@ public class StoreFront {
 	 * Returns the inventory manager for this store.
 	 * @return the inventory manager for this store
 	 */
-	
 	public InventoryManager getInventoryManager() {
 		return inventoryManager;
 	}
@@ -31,8 +33,7 @@ public class StoreFront {
 	/**
 	 * Updates the inventory with the given map of salable products and their quantities.
 	 * @param updatedInventory a map of salable products and their quantities representing the updated inventory
-	 */
-	
+	 */	
 	public void updateInventory(ShoppingCart cart) {
 	    this.inventoryManager.updateInventory(cart);
 	}
@@ -42,7 +43,6 @@ public class StoreFront {
 	 * The quantity of each product in the inventory is reduced by the quantity of that product in the cart.
 	 * @param cart the shopping cart containing the products and quantities to be sold
 	 */
-	
 	public void processSale(ShoppingCart cart) {
 	    Map<SalableProduct, Integer> products = cart.getProducts();
 	    for (SalableProduct product : products.keySet()) {
@@ -55,8 +55,7 @@ public class StoreFront {
 	 * Processes cancel of sale by updating the store's inventory with the products and quantities in the given shopping cart.
 	 * The quantity of each product in the inventory is increased by the quantity of that product in the cart.
 	 * @param cart the shopping cart containing the products and quantities to be returned
-	 */
-	
+	 */	
 	public void processCancel(ShoppingCart cart) {
 	    Map<SalableProduct, Integer> products = cart.getProducts();
 	    for (SalableProduct product : products.keySet()) {
@@ -82,16 +81,16 @@ public class StoreFront {
 	/**
 	 * Main method for testing the StoreFront class and its functionality.
 	 */
-	
 	public static void main(String[] args) {	
 		// We create a new store with an established inventory, as well as an empty shopping cart for the user
 		StoreFront store = new StoreFront();
 		Scanner scanner = new Scanner(System.in);
 	    boolean done = false;
 	    ShoppingCart cart = new ShoppingCart();
-		
+	    
 		//Welcome message for the store
 		System.out.println("Welcome to the FWA Store! We sell items to prepare you for your arena fight!\n");
+			
 		
 		// Loop StoreFront options until the user chooses to quit
 	    while (!done) {
@@ -101,45 +100,30 @@ public class StoreFront {
 	            case "1":
 	            	//Display the current inventory
 	            	Map<String, SalableProduct> initialInventory = store.getInventoryManager().getInventory();
+	            	System.out.println("\nHere's what we've got: \n");
 
-	                System.out.println("\nHere's what we've got: \n");
+	            	//Organize inventory in alphabetical order
+	            	List<SalableProduct> productList = new ArrayList<>(initialInventory.values());
+	            	productList.sort(Comparator.comparing(SalableProduct::getName));
 
-	                List<Weapon> weaponList = new ArrayList<>();
-	                List<SalableProduct> otherProducts = new ArrayList<>();
-
-	                for (SalableProduct product : initialInventory.values()) {
-	                    if (product instanceof Weapon) {
-	                        weaponList.add((Weapon) product);
-	                    } else {
-	                        otherProducts.add(product);
-	                    }
-	                }
-
-	                weaponList.sort(Comparator.comparing(Weapon::getName));
-
-	                System.out.println("Weapons:\n");
-	                for (Weapon weapon : weaponList) {
-	                    System.out.println(weapon.getName() + ": " + weapon.getDescription() + " It costs: $" + weapon.getPrice() + ". We currently have in stock: " + weapon.getQuantity() + "\n");
-	                }
-
-	                System.out.println("Other Products:\n");
-	                for (SalableProduct product : otherProducts) {
-	                    System.out.println(product.getName() + ": " + product.getDescription() + " It costs: $" + product.getPrice() + ". We currently have in stock: " + product.getQuantity() + "\n");
-	                }
-	                break;
+	            	for (SalableProduct product : productList) {
+	            	    System.out.println(product.getName() + ": " + product.getDescription() + " It costs: $" + product.getPrice() + ". We currently have in stock: " + product.getQuantity() + "\n");
+	            	}
+	            	break;
 	                
 	            case "2":
 	            	// Allow user to add product to the shopping cart
 	            	 boolean validInput = false;
 	            	 while(!validInput) {
- 		         		 
+		         		 
 	            		 System.out.println("\nHere's what we've got: \n");
 	            	    	Map<String, SalableProduct> inventory = store.getInventoryManager().getInventory();
-	            	    	for (SalableProduct product : inventory.values()) {
-	            	    		System.out.println(product.getName() + ": " + product.getDescription() +
-	            	                ", it costs: $" + product.getPrice() + ". We currently have in stock: " +
-	            	                product.getQuantity() + "\n");
-	            	    	}
+	            	    	List<SalableProduct> prodList = new ArrayList<>(inventory.values());
+	    	            	prodList.sort(Comparator.comparing(SalableProduct::getName));
+
+	    	            	for (SalableProduct product : prodList) {
+	    	            	    System.out.println(product.getName() + ": " + product.getDescription() + " It costs: $" + product.getPrice() + ". We currently have in stock: " + product.getQuantity() + "\n");
+	    	            	}
 	            	    	
 	            	    	System.out.println("Please enter the name of the product you want to add to your shopping cart:");
 	            	    	String productName = scanner.next().toLowerCase(); // Convert input to lowercase for case-insensitive comparison
@@ -172,8 +156,7 @@ public class StoreFront {
 	            	    	
 	            	    	// Reduce the quantity of products in the inventory
 	            	        Map<SalableProduct, Integer> lessInventory = cart.getProducts();
-	            	        for (SalableProduct prods : lessInventory.keySet()) {
-	            	            int newQuantity = lessInventory.get(product);
+	            	        for (SalableProduct products: lessInventory.keySet()) {
 	            	            store.getInventoryManager().reduceQuantity(product, quantity);
 	            	        }                  
 	            	    }
@@ -250,7 +233,8 @@ public class StoreFront {
 	                            cart.removeProduct(productToRemove, 1); // Remove only one quantity of the product
 	                            System.out.println("Removed 1 " + productToRemove.getName() + " from your shopping cart.\n");
 	                            store.getInventoryManager().increaseQuantity(productToRemove, 1); // Increase the quantity in the store's inventory
-	                        } else {
+	                        } 
+	                        else {
 	                            System.out.println("The product is not in your shopping cart.\n");
 	                        }
 	                        break;

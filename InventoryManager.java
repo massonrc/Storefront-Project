@@ -1,5 +1,15 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 /**
  * The InventoryManager class represents a collection of salable products
@@ -10,19 +20,26 @@ public class InventoryManager {
 
     /** 
      * The list of salable products in the inventory. 
-     */
-	
+     */	
 	private Map<String, SalableProduct> inventory;
 
     /**
      * Constructs a new inventory manager with the given initial inventory.
      * @param initialInventory a map of salable products and their quantities representing the initial inventory
-     */
-     
-    
+     */      
 	 public InventoryManager(Map<SalableProduct, Integer> initialInventory) {
 	        inventory = new HashMap<>();
 	        initializeInventory();
+	 }
+	 
+	 /**
+	  * Constructs a new inventory manager and initializes the inventory by loading the data from the specified inventory file.
+	  * @param inventoryFilePath the path to the inventory file
+	  */
+	 public InventoryManager(String fileName) {
+		 inventory = new HashMap<>();
+		 loadInventoryFromFile(fileName);
+		 
 	 }
 	 
 	 /**
@@ -105,11 +122,6 @@ public class InventoryManager {
 	 
 	 public void processSale(ShoppingCart cart) {
 		    Map<SalableProduct, Integer> products = cart.getProducts();
-		    for (Map.Entry<SalableProduct, Integer> entry : products.entrySet()) {
-		        SalableProduct product = entry.getKey();
-		        int quantity = entry.getValue();
-		        reduceQuantity(product, quantity);
-		    }
 		}
 	 
 	 /**
@@ -153,4 +165,24 @@ public class InventoryManager {
 	            inventory.put(productName, product);
 	        }
 	    }
+	    
+	    /**
+	     * Loads the inventory data from the specified inventory file and populates the inventory map.
+	     * Throws IO Exception if error in finding file and will terminate program.
+	     * @param inventoryFilePath the path to the inventory file
+	     */
+	    public void loadInventoryFromFile(String fileName) {
+	        try {
+	            File inventoryFile = new File(fileName);
+	            ObjectMapper mapper = new ObjectMapper();
+	            Map<String, SalableProduct> inventoryMap = mapper.readValue(inventoryFile, new TypeReference<Map<String, SalableProduct>>() {});
+	            inventory = new LinkedHashMap<>(inventoryMap);
+	            System.out.println("Inventory loaded successfully from file: " + fileName + "\n");
+	        } 
+	        catch (IOException e) {
+	            System.out.println("Failed to load inventory from file: " + e.getMessage());
+	            System.exit(0);
+	        }
+	    }
+
 }

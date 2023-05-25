@@ -1,11 +1,18 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * The Weapon class represents a salable product that is a type of weapon, with a name, description, price, 
  * quantity, and damage value.
  * @author rargueta
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Weapon extends SalableProduct implements Comparable<Weapon> {
 	private int damage;
+	
+	public Weapon() {
+		
+	}
 	
 	/**
 	 * Creates a new Weapon object with the specified name, description, price, quantity, and damage value.
@@ -38,6 +45,6 @@ public class Weapon extends SalableProduct implements Comparable<Weapon> {
 
 	@Override
 	public int compareTo(Weapon other) {
-		return getName().compareToIgnoreCase(other.getName());
+		return this.getName().compareTo(other.getName());
 	}
 }

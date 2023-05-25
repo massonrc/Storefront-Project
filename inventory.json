@@ -1,0 +1,37 @@
+{
+  "Sword": {
+    "name": "Sword",
+    "description": "A long, two-handed blade that deals a fair amount of damage.",
+    "price": 100,
+    "quantity": 2,
+    "damage": 20
+  },
+  "Axe": {
+    "name": "Axe",
+    "description": "A one-handed double-bladed weapon that deals a fair amount of damage.",
+    "price": 150,
+    "quantity": 1,
+    "damage": 35
+  },
+  "Chainmail": {
+    "name": "Chainmail",
+    "description": "A protective layer of armor that goes over the chest.",
+    "price": 250,
+    "quantity": 3,
+    "defense": 50
+  },
+  "Boots": {
+    "name": "Boots",
+    "description": "A protective layer of armor that covers the feet and shins.",
+    "price": 100,
+    "quantity": 5,
+    "defense": 25
+  },
+  "Ginseng": {
+    "name": "Ginseng",
+    "description": "A root rich in antioxidants that boosts health.",
+    "price": 50,
+    "quantity": 25,
+    "health": 15
+  }
+}
