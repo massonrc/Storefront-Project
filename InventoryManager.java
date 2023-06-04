@@ -22,15 +22,6 @@ public class InventoryManager {
      * The list of salable products in the inventory. 
      */	
 	private Map<String, SalableProduct> inventory;
-
-    /**
-     * Constructs a new inventory manager with the given initial inventory.
-     * @param initialInventory a map of salable products and their quantities representing the initial inventory
-     */      
-	 public InventoryManager(Map<SalableProduct, Integer> initialInventory) {
-	        inventory = new HashMap<>();
-	        initializeInventory();
-	 }
 	 
 	 /**
 	  * Constructs a new inventory manager and initializes the inventory by loading the data from the specified inventory file.
@@ -41,34 +32,6 @@ public class InventoryManager {
 		 loadInventoryFromFile(fileName);
 		 
 	 }
-	 
-	 /**
-	  * Initializes the inventory with some predefined products.
-	  * This method adds several products to the inventory, including weapons, armor, and health items.
-	  * The added products are:
-	  * - Sword: A long, two-handed blade that deals a fair amount of damage.
-	  * - Axe: A one-handed double-bladed weapon that deals a fair amount of damage.
-	  * - Chainmail: A protective layer of armor that goes over the chest.
-	  * - Boots: A protective layer of armor that covers the feet and shins.
-	  * - Ginseng: A root rich in antioxidants that boosts health.
-	  *
-	  * The products are added to the inventory using the addProduct() method.
-	  * After calling this method, the inventory will contain the initialized products.
-	  */
-	 
-	 private void initializeInventory() {
-	        Weapon sword = new Weapon("Sword", "A long, two-handed blade that deals a fair amount of damage.", 100, 2, 20);
-	        Weapon axe = new Weapon("Axe", "A one-handed double bladed weapon that deals a fair amount of damage.", 150, 1, 35);
-	        Armor chainmail = new Armor("Chainmail", "A protective layer of armor that goes over the chest.", 250, 3, 50);
-	        Armor boots = new Armor("Boots", "A protective layer of armor that covers the feet and shins.", 100, 5, 25);
-	        Health ginseng = new Health("Ginseng", "A root rich in antioxidants that boosts health.", 50, 25, 15);
-
-	        addProduct(sword);
-	        addProduct(axe);
-	        addProduct(chainmail);
-	        addProduct(boots);
-	        addProduct(ginseng);
-	    }
 
 	 /**
 	  * Returns the inventory map.

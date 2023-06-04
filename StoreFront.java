@@ -98,11 +98,11 @@ public class StoreFront {
 	        String input = scanner.next();
 	        switch (input) {
 	            case "1":
-	            	//Display the current inventory
+	            	// Get the current inventory
 	            	Map<String, SalableProduct> initialInventory = store.getInventoryManager().getInventory();
 	            	System.out.println("\nHere's what we've got: \n");
 
-	            	//Organize inventory in alphabetical order
+	            	// Organize inventory in alphabetical order 
 	            	List<SalableProduct> productList = new ArrayList<>(initialInventory.values());
 	            	productList.sort(Comparator.comparing(SalableProduct::getName));
 
@@ -116,21 +116,49 @@ public class StoreFront {
 	            	 boolean validInput = false;
 	            	 while(!validInput) {
 		         		 
-	            		 System.out.println("\nHere's what we've got: \n");
-	            	    	Map<String, SalableProduct> inventory = store.getInventoryManager().getInventory();
-	            	    	List<SalableProduct> prodList = new ArrayList<>(inventory.values());
-	    	            	prodList.sort(Comparator.comparing(SalableProduct::getName));
+	            		// Get current inventory 
+	            	    Map<String, SalableProduct> inventory = store.getInventoryManager().getInventory();
+	            	    List<SalableProduct> prodList = new ArrayList<>(inventory.values());
+	    	            prodList.sort(Comparator.comparing(SalableProduct::getName)); // Organizes inventory into alphabetical order as default
+	    	            	
+	    	            System.out.println("Looking for something specific? We can help organize that.\n");
+	    	            	
+	    	            // Prompt the user to select the sorting order
+	    	            System.out.println("Please select a sorting order:");
+	    	            System.out.println("1. Ascending order based on names");
+	    	            System.out.println("2. Descending order based on names");
+	    	            System.out.println("3. Ascending order based on price");
+	    	            System.out.println("4. Descending order based on price");
+	    	            int sortingOption = scanner.nextInt();
 
-	    	            	for (SalableProduct product : prodList) {
-	    	            	    System.out.println(product.getName() + ": " + product.getDescription() + " It costs: $" + product.getPrice() + ". We currently have in stock: " + product.getQuantity() + "\n");
-	    	            	}
+	    	            // Sort the products based on the selected sorting option
+	    	            switch (sortingOption) {
+	    	                case 1:
+	    	                    prodList.sort(Comparator.comparing(SalableProduct::getName));
+	    	                    break;
+	    	                case 2:
+	    	                    prodList.sort(Comparator.comparing(SalableProduct::getName).reversed());
+	    	                    break;
+	    	                case 3:
+	    	                    prodList.sort(Comparator.comparing(SalableProduct::getPrice));
+	    	                    break;
+	    	                case 4:
+	    	                    prodList.sort(Comparator.comparing(SalableProduct::getPrice).reversed());
+	    	                    break;
+	    	                default:
+	    	                   System.out.println("Invalid option. Displaying products in alphabetical order instead: \n");
+	    	            }
+
+	    	           for (SalableProduct product : prodList) {
+	    	        	   System.out.println(product.getName() + ": " + product.getDescription() + " It costs: $" + product.getPrice() + ". We currently have in stock: " + product.getQuantity() + "\n");
+	    	            }
 	            	    	
-	            	    	System.out.println("Please enter the name of the product you want to add to your shopping cart:");
-	            	    	String productName = scanner.next().toLowerCase(); // Convert input to lowercase for case-insensitive comparison
-	            	    	System.out.println("Please enter the quantity of " + productName + " you want to add:");
-	            	    	int quantity = scanner.nextInt();
+	            	    System.out.println("Please enter the name of the product you want to add to your shopping cart:");
+	            	    String productName = scanner.next().toLowerCase(); // Convert input to lowercase for case-insensitive comparison
+	            	    System.out.println("Please enter the quantity of " + productName + " you want to add:");
+	            	    int quantity = scanner.nextInt();
 
-	            	    	SalableProduct product = null;
+	            	    SalableProduct product = null;
 	            	    	for (SalableProduct p : inventory.values()) {
 	            	    		if (p.getName().toLowerCase().equals(productName)) { // Compare lowercase product names
 	            	    			product = p;
