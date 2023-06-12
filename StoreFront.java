@@ -3,6 +3,13 @@ import java.io.IOException;
 import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * The StoreFront class represents a store with an inventory of salable products
@@ -12,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 public class StoreFront {
 	private InventoryManager inventoryManager;
 	private ShoppingCart cart;
+	private AdministrationService administrationService;
 
 
 	/**
@@ -20,6 +28,9 @@ public class StoreFront {
 	public StoreFront() {
 		this.inventoryManager = new InventoryManager("inventory.json");
 		this.cart = new ShoppingCart();
+		
+		// Create the AdministrationService instance and pass the StoreFront reference
+	   administrationService = new AdministrationService(this);
 	}
 
 	/**
@@ -77,6 +88,10 @@ public class StoreFront {
         System.out.println("4. Cancel sale");
         System.out.println("5. Quit");
     }
+    
+    public void startAdministrationService() {
+        administrationService.start();
+    }
 
 	/**
 	 * Main method for testing the StoreFront class and its functionality.
@@ -87,6 +102,7 @@ public class StoreFront {
 		Scanner scanner = new Scanner(System.in);
 	    boolean done = false;
 	    ShoppingCart cart = new ShoppingCart();
+	    store.startAdministrationService();
 	    
 		//Welcome message for the store
 		System.out.println("Welcome to the FWA Store! We sell items to prepare you for your arena fight!\n");
